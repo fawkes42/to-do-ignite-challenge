@@ -2,9 +2,12 @@ import './globals.css'
 import { Header } from "./components/Header"
 import { PlusCircle, ClipboardText } from "phosphor-react";
 import style from './App.module.css';
+import { Task } from './components/Task';
 
 function App() {
-    const tasks: string[] = [];
+    const tasks: string[] = [
+        '1'
+    ];
     return (
         <div className="App">
             <Header />
@@ -32,7 +35,11 @@ function App() {
                 </div>
                 <div className={style.taskList}>
                     {
-                        tasks.length > 0 ? null : (
+                        tasks.length > 0 ? (
+                            tasks.map(task => (
+                                <Task />
+                            ))
+                        ) : (
                             <div className={style.emptyList}>
                                 <ClipboardText size={56} />
                                 <h4>Você ainda não tem tarefas cadastradas</h4>
