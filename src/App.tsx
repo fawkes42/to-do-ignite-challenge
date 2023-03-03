@@ -3,18 +3,65 @@ import { Header } from "./components/Header"
 import { PlusCircle, ClipboardText } from "phosphor-react";
 import style from './App.module.css';
 import { Task } from './components/Task';
+import { ITask } from './interfaces/Task';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
 function App() {
-    const tasks: string[] = [
-        '1'
-    ];
+    const [tasks, setTasks] = useState<ITask[]>([]);
+    const [newTask, setNewTask] = useState<string>('');
+
+    const handleNewTaskChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setNewTask(event.target.value);
+    }
+
+    const handleNewTask = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (newTask.trim() === '') {
+            return;
+        }
+        const newTaskData = {
+            id: new Date().getTime().toString(),
+            description: newTask,
+            done: false
+        }
+        setTasks([...tasks, newTaskData]);
+        console.log(newTaskData);
+    }
+
+    const handleDoneTask = (id: string) => {
+        setTasks(tasks.map(task => {
+            if (task.id === id) {
+                return {
+                    ...task,
+                    done: !task.done
+                }
+            }
+            return task;
+        }))
+    }
+
+    const deleteTask = (id: string) => {
+        setTasks(tasks.filter(task => task.id !== id));
+    }
+
+    const isEmptyNewTask = newTask.trim() === '';
     return (
         <div className="App">
             <Header />
             <main className={style.content}>
-                <form className={style.form}>
-                    <input placeholder="Adicione uma nova tarefa" />
-                    <button type="submit">
+                <form
+                    className={style.form}
+                    onSubmit={handleNewTask}
+                >
+                    <input
+                        placeholder="Adicione uma nova tarefa"
+                        value={newTask}
+                        onChange={handleNewTaskChange}
+                    />
+                    <button
+                        type="submit"
+                        disabled={isEmptyNewTask}
+                    >
                         Criar
                         <PlusCircle size={22} />
                     </button>
@@ -37,7 +84,12 @@ function App() {
                     {
                         tasks.length > 0 ? (
                             tasks.map(task => (
-                                <Task />
+                                <Task
+                                    key={task.id}
+                                    task={task}
+                                    onDelete={deleteTask}
+                                    onDone={handleDoneTask}
+                                />
                             ))
                         ) : (
                             <div className={style.emptyList}>
