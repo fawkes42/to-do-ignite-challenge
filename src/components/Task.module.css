@@ -14,6 +14,10 @@
     position: relative;
 }
 
+.task + .task {
+    margin-top: 0.75rem;
+}
+
 .taskContent {
     display: flex;
     align-items: center;
@@ -45,6 +49,11 @@
     background: var(--purple);
     border-color: var(--purple);
     position: relative;
+}
+
+.checkbox:checked + p {
+    text-decoration: line-through;
+    color: var(--gray-300);
 }
 
 .checkbox:checked:hover {
