@@ -4,11 +4,12 @@ import { PlusCircle, ClipboardText } from "phosphor-react";
 import style from './App.module.css';
 import { Task } from './components/Task';
 import { ITask } from './interfaces/Task';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 function App() {
     const [tasks, setTasks] = useState<ITask[]>([]);
     const [newTask, setNewTask] = useState<string>('');
+    const [taskCount, setTaskCount] = useState<number>(0);
 
     const handleNewTaskChange = (event: ChangeEvent<HTMLInputElement>) => {
         setNewTask(event.target.value);
@@ -25,7 +26,7 @@ function App() {
             done: false
         }
         setTasks([...tasks, newTaskData]);
-        console.log(newTaskData);
+        setNewTask('');
     }
 
     const handleDoneTask = (id: string) => {
@@ -43,6 +44,13 @@ function App() {
     const deleteTask = (id: string) => {
         setTasks(tasks.filter(task => task.id !== id));
     }
+
+    useEffect(
+        () => {
+            setTaskCount(tasks.length);
+        },
+        [tasks]
+    )
 
     const isEmptyNewTask = newTask.trim() === '';
     return (
@@ -70,13 +78,17 @@ function App() {
                     <span className={style.totalTasks}>
                         Tarefas criadas
                         <span className={style.countBadge}>
-                            {0}
+                            {taskCount}
                         </span>
                     </span>
                     <span className={style.finishedTasks}>
                         Concluídas
                         <span className={style.countBadge}>
-                            {0}
+                            {
+                                taskCount > 0 ?
+                                    `${tasks.filter(task => task.done).length} de ${taskCount}`
+                                    : 0
+                            }
                         </span>
                     </span>
                 </div>
